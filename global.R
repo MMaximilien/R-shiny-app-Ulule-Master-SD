@@ -20,7 +20,7 @@ data_ulule <- read_csv(chemin_donnees)
 
 
 # ---- Nettoyage des données -------------------------------------------
-data_ulule_propre <- data_ulule |>
+data_ulule_clean <- data_ulule |>
   mutate(
     # Conversion des colonnes de dates en vrai type Date
     date_start = as.Date(date_start),
@@ -41,12 +41,12 @@ data_ulule_propre <- data_ulule |>
   )
 
 # ---- Listes utilisées dans les filtres de l'UI -----------------------
-liste_annees     <- sort(unique(data_ulule_propre$annee))
-liste_trimestres <- sort(unique(data_ulule_propre$trimestre))
-liste_categories <- sort(unique(na.omit(data_ulule_propre$category)))
+liste_annees     <- sort(unique(data_ulule_clean$annee))
+liste_trimestres <- sort(unique(data_ulule_clean$trimestre))
+liste_categories <- sort(unique(na.omit(data_ulule_clean$category)))
 
 # Correspondance "libellé affiché" -> "valeur technique" (input$indicateur)
-indicateurs_campagnes <- c(
+indicateurs <- c(
   "Nombre de campagnes"          = "nb_campagnes",
   "Nombre de campagnes réussies" = "nb_reussies",
   "Ratio (%)"                    = "combine"
