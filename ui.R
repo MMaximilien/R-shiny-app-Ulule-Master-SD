@@ -203,13 +203,6 @@ ui <- fluidPage(
               h3("Top 10 des pays", class = "mb-0"),
               icone_aide(AIDE_CLASSEMENT_PAYS)
             ),
-            radioButtons(
-              inputId  = "critere_pays",
-              label    = NULL,
-              choices  = criteres_pays,
-              selected = "montant",
-              inline   = TRUE
-            ),
             girafeOutput("graphique_pays")
           )
         ),

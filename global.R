@@ -105,77 +105,15 @@ AIDE_MONTANT_TOTAL <- paste(
   "qu'elles aient réussi ou non."
 )
 AIDE_MEDIAN <- paste(
-  "La moitié des campagnes a collecté moins que ce montant, l'autre moitié",
-  "davantage. Moins sensible aux très gros projets que la moyenne."
-)
+  "Montant médian collecté par campagne.")
+
 AIDE_TOP_PAYS <- "Pays dont les campagnes ont collecté le montant total le plus élevé."
 AIDE_CLASSEMENT_PAYS <- paste(
-  "Les 10 premiers pays selon le critère choisi. Les montants sont en euros",
+  "Les 10 premiers pays selon le critère choisi. Les montants sont en euros et exclusion des pays vides",
   "(seules les campagnes en euros sont retenues)."
 )
 
-# Petite icône "i" avec infobulle (bslib::tooltip), à placer à côté d'un titre
-icone_aide <- function(texte) {
-  bslib::tooltip( #permet de faire une infobulle
-    bsicons::bs_icon("info-circle", class = "ms-1"), #icone I avec un espace à gauche
-    texte,
-    placement = "top" # infobulle au dessus de l'icone
-  )
-}
 
-
-# ---- Fonctions utilitaires --------------------------------------------
-
-# Formate un nombre en euros : arrondi à l'entier, espace comme séparateur
-fmt_eur <- function(x) {
-  paste0(format(round(x), big.mark = " "), " €")
-}
-
-# Colonnes affichées dans l'onglet "Données" et exportées en CSV.
-# Nom affiché (à gauche) = nom de la colonne dans les données (à droite).
-COLONNES_EXPORT <- c(
-  "Identifiant"                = "id",
-  "Catégorie"                  = "category",
-  "Pays"                       = "country",
-  "Localisation"               = "location",
-  "Date de début"              = "date_start",
-  "Date de fin"                = "date_end",
-  "Durée (jours)"              = "nb_days",
-  "Statut"                     = "status",
-  "Terminée"                   = "finished",
-  "Objectif (€)"               = "goal",
-  "Montant collecté (€)"       = "amount_raised",
-  "Taux de financement (%)"    = "percent",
-  "Objectif atteint"           = "goal_raised",
-  "Lien"                       = "absolute_url"
-)
-
-# Ne garde que les colonnes principales, avec des noms lisibles
-table_export <- function(df) {
-  df |> select(all_of(COLONNES_EXPORT))
-}
-
-# Thème ggplot2 commun à tous les graphiques de l'appli
-theme_ulule <- function() {
-  theme_minimal() +
-    theme(
-      panel.grid      = element_blank(), #supprime le quadrillage
-      legend.position = "bottom",
-      axis.text.x     = element_text(angle = 45, hjust = 1)
-    )
-}
-
-# Convertit un objet ggplot en graphique interactif girafe
-to_girafe <- function(p) {
-  girafe(
-    ggobj = p, # objet qui va etre transformé
-    width_svg  = 8,
-    height_svg = 4.5,
-    options = list(
-      opts_sizing(rescale = TRUE, width = 1) #prend toutes la largeur disponible et redimensionner si on change d'écran 
-    )
-  )
-}
 
 # ---- Date de la dernière campagne -------------------------------------
 date_derniere_maj <- max(data_ulule_clean$date_start)
