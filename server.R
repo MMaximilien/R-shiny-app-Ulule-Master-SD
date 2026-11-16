@@ -110,8 +110,9 @@ server <- function(input, output, session) {
             "Période : ", periode,
             "\nNombre total de campagnes : ", nombre_campagnes,
             "\nNombre de campagnes réussies : ", nombre_reussies,
+            "\nNombre de campagnes non réussies : ", non_reussies,
             "\nTaux de réussite : ", taux_reussite, " %"
-          )
+            )
         ) |>
         select(periode, tooltip, nombre_reussies, non_reussies) |>
         tidyr::pivot_longer(
@@ -165,7 +166,7 @@ server <- function(input, output, session) {
       ggplot(df, aes(x = periode, y = nombre_campagnes)) +
         geom_col_interactive(
           aes(
-            tooltip = paste0("Période : ", periode, "\nCampagnes : ", nombre_campagnes),
+            tooltip = paste0("Période : ", periode, "\Nombre de campagnes : ", nombre_campagnes),
             data_id = periode
           ),
           fill = COULEUR_NON_REUSSIE,

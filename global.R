@@ -34,10 +34,10 @@ data_ulule_clean <- data_ulule |>
     nb_days = as.double(difftime(date_end, date_start, units = "days"))
   ) |>
   filter(
-    is_cancelled == FALSE,                  # On écarte les campagnes annulées
-    !is.na(date_start),                     # On écarte les lignes sans date de début
+    is_cancelled == FALSE,                  # On écarte les campagnes annulées, 3196 annulées
+    !is.na(date_start),                     # On écarte les lignes sans date de début, 69 sans date de début
     date_start >= as.Date("2020-01-01"),    # Campagnes lancées à partir de 2020
-    currency == "EUR"                       # Campagnes en euros uniquement
+    currency == "EUR"                       # Campagnes en euros uniquement -> 2500 exclut
   )
 
 # ---- Listes utilisées dans les filtres de l'UI -----------------------
@@ -66,9 +66,9 @@ criteres_pays <- c(
 
 
 
-# ---- Constantes de couleurs -------------------------------------------
+# ---- Couleurs -------------------------------------------
 COULEUR_PRIMAIRE    <- "#00A3E0"
-COULEUR_REUSSIE     <- COULEUR_PRIMAIRE
+COULEUR_REUSSIE     <- "#00A3E0"
 COULEUR_NON_REUSSIE <- "gray83"
 COULEUR_MEDIANE     <- "#27AE60"
 COULEUR_CORAIL      <- "#FF6B57"
@@ -78,10 +78,10 @@ COULEUR_TEXTE_KPI   <- "#FFFFFF"
 
 
 
-# ---- Textes d'aide (infobulles) ----------------------------------------
+# ---- Texte explication indicateurs ----------------------------------------
 AIDE_PERIMETRE <- paste(
   "Sont prises en compte : les campagnes en euros, lancées depuis le",
-  "1er janvier 2020 et non annulées. Tous les montants sont en euros."
+  "1er janvier 2020 et non annulées."
 )
 AIDE_NB_CAMPAGNES <- "Nombre de campagnes correspondant aux filtres sélectionnés."
 AIDE_REUSSIE <- paste(
