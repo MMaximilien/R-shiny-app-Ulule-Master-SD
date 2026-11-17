@@ -1,40 +1,43 @@
 # ============================================================
-# ui.R
+# ui
 # ============================================================
 
 ui <- fluidPage(
   
   # ---- Thème bslib -----------------------------------------------
   theme = bslib::bs_theme(
-    version = 5,
-    primary = COULEUR_PRIMAIRE, #Couleur principale : boutons, liens, bandeau
-    "border-radius" = "0.6rem" # # Coins arrondis des cartes et boutons
+    primary = COULEUR_PRIMAIRE,
+    secondary = COULEUR_CORAIL, 
+    "border-radius" = "0.6rem" # Coins arrondis des cartes et boutons
   ),
   
   # ---- Bandeau de titre avec logo ---------------------------------
-  div(
-    #   text-bg-primary         : fond de la couleur primaire + texte lisible dessus
-    #   p-4                     : espace intérieur (padding) de taille 4
-    #   mb-4                    : marge en dessous (margin-bottom)
-    #   d-flex                  : place les éléments enfants côte à côte (flexbox)
-    #   align-items-center      : les centre verticalement
-    #   gap-3                   : espace entre les éléments
-    #   justify-content-between : pousse le 1er bloc à gauche et le dernier à droite
-    class = "text-bg-primary p-4 mb-4 d-flex align-items-center gap-3 justify-content-between",
-    
-    # Bloc de gauche : logo + titres
-    div(
-      class = "d-flex gap-3",
-      tags$img(src = "logo_ulule.png", height = "70"),
-      div(
-        h2("Suivi trimestriel des campagnes Ulule", class = "mb-0"), ## mb-0 : pas de marge basse
-        p("Analyse des campagnes, financements par période & catégories")
+  bslib::value_box(
+    title = NULL, #pas de titre automatique
+    value = bslib::layout_columns(
+      col_widths = c(1, 8, 3),
+      
+      tags$img( #1ere colonne logo
+        src = "logo_ulule.png",
+        width = "65" #largeur
+      ),
+      
+      div( #titre et sous titre
+        h3("Suivi trimestriel des campagnes Ulule", class = "fs-4"),
+        p(tags$em("Analyse des campagnes, financements par trimestres & catégories"), class = "fs-5")      ),
+      
+      div( #date de mise a jour
+        p(texte_derniere_maj,  class = "fs-6")
       )
     ),
     
-    p(texte_derniere_maj)   # Bloc de droite : date de la dernière campagne (texte préparé dans global.R)
+    class = "p-0",  #espace à l'intérieur de la box
+    theme = bslib::value_box_theme( #couleur bandeau
+      bg = COULEUR_PRIMAIRE,
+      fg = "white"
+    )
   ),
-  
+    
   sidebarLayout(
     
     # ---- Barre latérale : filtres ----------------------------------
@@ -45,8 +48,8 @@ ui <- fluidPage(
         inputId  = "annee",
         label    = "Année",
         choices  = liste_annees,
-        selected = liste_annees,
-        inline   = TRUE #cases côte à côte
+        selected = liste_annees, #toutes les années sont selectionnées
+        inline   = TRUE # Affiche les cases à cocher côte à côte
       ),
       
       checkboxGroupInput(
@@ -73,20 +76,22 @@ ui <- fluidPage(
           countSelectedText  = "{0} catégories sélectionnées"
         )
       ),
-      
       hr(), #ligne horizontale de séparation
       
       actionButton(
         "reset_filtres",
         "Réinitialiser les filtres",
-        icon  = icon("rotate-left"),
-        class = "btn-outline-secondary w-100 mb-2" ## btn-outline-secondary = bouton à contour gris, w-100 = pleine largeur.
+        icon  = icon("rotate-left")  ,
+        class = "btn-outline-secondary w-100 mb-2"
+        # btn-outline-secondary : bouton avec contour secondaire
+        # w-100 : bouton sur toute la largeur disponible
+        # mb-2 : ajoute une marge en dessous du bouton
       ),
       
       downloadButton(
         "telecharger",
         "Télécharger les campagnes (CSV)",
-        class = "w-100"
+        class = "w-100" #utilisation de toute la largeur disponible
       )
     ),
     
@@ -94,12 +99,12 @@ ui <- fluidPage(
     mainPanel(
       width = 9,
       
-      # Résumé des filtres actifs, visible quel que soit l'onglet
+      # Résumé des filtres, visible quelque soient l'onglet
       div(
         class = "text-muted small mb-2", #  # text-muted = texte grisé ; small = petite taille.
-        icon("filter"), " ",
-        textOutput("resume_filtres", inline = TRUE), #   # inline = TRUE : reste sur la même ligne que l'icône
-        icone_aide(AIDE_PERIMETRE) # # petite icône "i" 
+        icon("filter"), " ", #icone puis espace
+        textOutput("resume_filtres", inline = TRUE), # inline = TRUE : reste sur la même ligne que l'icône
+        icone_aide(AIDE_PERIMETRE) # petite icône "i" avec explication 
       ),
       
       tabsetPanel(
@@ -110,8 +115,8 @@ ui <- fluidPage(
           
           bslib::layout_columns( #met plusieurs éléments en colonnes.
             value_box(
-              title    = tags$span("Nombre de campagnes", icone_aide(AIDE_NB_CAMPAGNES)),
-              value    = textOutput("kpi_nb_campagnes"),
+              title    = tags$span("Nombre de campagnes", icone_aide(AIDE_NB_CAMPAGNES)), # Titre accompagné de l'icône d'aide
+              value    = textOutput("kpi_nb_campagnes"), #valeur calculé
               showcase = bsicons::bs_icon("megaphone"),
               theme    = value_box_theme(bg = COULEUR_PRIMAIRE, fg = COULEUR_TEXTE_KPI) # bg = fond, fg = couleur du texte
             ),
@@ -130,11 +135,11 @@ ui <- fluidPage(
             col_widths = c(4, 4, 4)
           ),
           
-          card( # un cadre avec en-tête (card_header) et contenu.
+          card( # un cadre avec en-tête (card_header) et contenu
             card_header(
-              ##Centre le contenu de l'en-tête (titre + icône d'aide)
+              #Centre le contenu de l'en-tête (titre + icône d'aide)
               class = "d-flex justify-content-center align-items-center",
-              h3("Évolution des campagnes", class = "mb-0"),
+              h3("Évolution des campagnes"),
               icone_aide(AIDE_EVOLUTION)
             ),
             radioButtons(
@@ -184,7 +189,7 @@ ui <- fluidPage(
           card(
             card_header(
               class = "d-flex justify-content-center",
-              h3("Analyse des financements", class = "mb-0")
+              h3("Analyse des financements")
             ),
             radioButtons(
               inputId  = "vue_montant",
@@ -200,7 +205,7 @@ ui <- fluidPage(
           card(
             card_header(
               class = "d-flex justify-content-center align-items-center",
-              h3("Top 10 des pays", class = "mb-0"),
+              h3("Top 10 des pays"),
               icone_aide(AIDE_CLASSEMENT_PAYS)
             ),
             girafeOutput("graphique_pays")

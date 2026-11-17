@@ -1,5 +1,5 @@
 # ============================================================
-# global.R
+# global
 # ============================================================
 
 
@@ -65,13 +65,12 @@ criteres_pays <- c(
 )
 
 
-
 # ---- Couleurs -------------------------------------------
 COULEUR_PRIMAIRE    <- "#00A3E0"
 COULEUR_REUSSIE     <- "#00A3E0"
 COULEUR_NON_REUSSIE <- "gray83"
 COULEUR_MEDIANE     <- "#27AE60"
-COULEUR_CORAIL      <- "#FF6B57"
+COULEUR_CORAIL      <- "#F01446"
 COULEUR_NOIR        <- "#2B2B2B"
 COULEUR_VIOLET      <- "#8E44AD"
 COULEUR_TEXTE_KPI   <- "#FFFFFF"
@@ -118,6 +117,6 @@ AIDE_CLASSEMENT_PAYS <- paste(
 # ---- Date de la dernière campagne -------------------------------------
 date_derniere_maj <- max(data_ulule_clean$date_start)
 texte_derniere_maj <- paste(
-  "Date de lancement de la dernière campagne :",
+  "Date de lancement de la dernière campagne enregistrée le :",
   format(date_derniere_maj, "%d/%m/%Y")
 )

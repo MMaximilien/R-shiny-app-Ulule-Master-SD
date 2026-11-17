@@ -9,9 +9,8 @@
 # Formate un nombre en euros : arrondi à l'entier, espace comme séparateur
 # de milliers, et jamais de notation scientifique (formatC format = "f")
 fmt_eur <- function(x) {
-  paste0(formatC(x, format = "f", digits = 0, big.mark = " "), " €")
+  paste0(format(round(x), big.mark = " ", scientific = FALSE, trim = TRUE), " €")
 }
-
 
 # ---- Table exportée (onglet Données + CSV) -------------------------
 
@@ -44,34 +43,41 @@ table_export <- function(df) {
 
 # Thème ggplot2 commun à tous les graphiques de l'appli
 theme_ulule <- function() {
-  theme_minimal() +
+  theme_minimal() +                                # Thème minimal de ggplot2
     theme(
-      panel.grid      = element_blank(),                    # supprime le quadrillage
-      legend.position = "bottom",
-      axis.text.x     = element_text(angle = 45, hjust = 1)
+      panel.grid      = element_blank(),           # Supprime le quadrillage du graphique
+      legend.position = "bottom",                  # Place la légende en bas du graphique
+      axis.text.x     = element_text(
+        angle = 45,                                # Incline les étiquettes de l'axe des abscisses à 45°
+        hjust = 1                                  # Aligne les étiquettes vers la droite
+      )
     )
 }
 
 # Convertit un objet ggplot en graphique interactif girafe
 to_girafe <- function(p) {
   girafe(
-    ggobj = p,                                              # objet à transformer
-    width_svg  = 8,
-    height_svg = 4.5,
+    ggobj = p,                                     # Graphique ggplot à transformer
+    width_svg  = 8,                                # Largeur du graphique en unités SVG
+    height_svg = 4.5,                              # Hauteur du graphique en unités SVG
     options = list(
-      opts_sizing(rescale = TRUE, width = 1)                # prend toute la largeur et s'adapte à l'écran
-    )
-  )
+      opts_sizing(
+        rescale = TRUE,                            # Autorise le redimensionnement du graphique
+        width = 1                                  # Utilise toute la largeur disponible
+      )
+  ))
 }
 
 
 # ---- Interface -------------------------------------------------------
 
+# Fonction qui ajoute une petite icône d'information "i"
+# à côté d'un élément de l'interface.
 # Petite icône "i" avec infobulle (bslib::tooltip), à placer à côté d'un titre
 icone_aide <- function(texte) {
   bslib::tooltip(
-    bsicons::bs_icon("info-circle", class = "ms-1"),        # icône "i" avec un espace à gauche
-    texte,
-    placement = "top"                                       # infobulle au-dessus de l'icône
+    bsicons::bs_icon("info-circle", class = "ms-1"), # Affiche une icône d'information
+    texte,                                           # Texte affiché dans l'infobulle
+    placement = "top"                                # Positionne l'infobulle au-dessus de l'icône
   )
 }

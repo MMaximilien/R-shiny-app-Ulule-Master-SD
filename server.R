@@ -1,5 +1,5 @@
 # ============================================================
-# server.R
+# server
 # ============================================================
 
 server <- function(input, output, session) {
@@ -185,8 +185,6 @@ server <- function(input, output, session) {
     
     df <- donnees_terminees() |>
       mutate(annee = as.character(annee)) # Convertit l'année en texte
-    
-    validate(need(nrow(df) > 0, "Aucune campagne terminée pour ces filtres."))
     
     # Calcul de la durée moyenne par trimestre et pivot en colonnes
     par_trimestre <- df |>
@@ -388,7 +386,7 @@ server <- function(input, output, session) {
         size = 3.5
       ) +
       scale_x_continuous(
-        labels = fmt_eur,
+        labels = scales::label_number(scale = 1e-6, suffix = " M€", accuracy = 0.1),
         expand = expansion(mult = c(0, 0.25))
       ) +
       labs(
