@@ -1,0 +1,12 @@
+name: R-shiny-app-test-Master-SD
+title: R-shiny-app-test-Master-SD
+username: erin-carado
+account: erin-carado
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 18480032
+bundleId: 12840538
+url: https://erin-carado.shinyapps.io/R-shiny-app-test-Master-SD/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

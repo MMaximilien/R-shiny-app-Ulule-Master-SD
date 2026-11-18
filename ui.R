@@ -18,7 +18,7 @@ ui <- fluidPage(
       col_widths = c(1, 8, 3),
       
       tags$img( #1ere colonne logo
-        src = "logo_ulule.png",
+        src = "Logo_ulule.png",
         width = "65" #largeur
       ),
       
