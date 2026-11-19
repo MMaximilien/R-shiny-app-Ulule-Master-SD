@@ -65,7 +65,8 @@ to_girafe <- function(p) {
         rescale = TRUE,                            # Autorise le redimensionnement du graphique
         width = 1                                  # Utilise toute la largeur disponible
       )
-  ))
+    )
+  )
 }
 
 

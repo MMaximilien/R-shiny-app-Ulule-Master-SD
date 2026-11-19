@@ -14,12 +14,16 @@ library(lubridate)       # Manipulation des dates
 library(shinyWidgets)    # pickerInput (sélection multiple avec recherche)
 
 
-# ---- Chargement des données -----------------------------------------
+# ---- Chargement des fonctions --------------------------------------
+source("./fonction/fonction.R")
+
+
+# ---- Chargement des données ----------------------------------------
 chemin_donnees <- "data/data_ulule_2025.csv"
 data_ulule <- read_csv(chemin_donnees)
 
 
-# ---- Nettoyage des données -------------------------------------------
+# ---- Nettoyage des données -----------------------------------------
 data_ulule_clean <- data_ulule |>
   mutate(
     # Conversion des colonnes de dates en vrai type Date
@@ -40,13 +44,13 @@ data_ulule_clean <- data_ulule |>
     currency == "EUR"                       # Campagnes en euros uniquement -> 2500 exclut
   )
 
-# ---- Listes utilisées dans les filtres de l'UI -----------------------
+# ---- Listes utilisées dans les filtres de l'UI ---------------------
 liste_annees     <- sort(unique(data_ulule_clean$annee))
 liste_trimestres <- sort(unique(data_ulule_clean$trimestre))
 liste_categories <- sort(unique(na.omit(data_ulule_clean$category)))
 
 # Correspondance "libellé affiché" -> "valeur technique" (input$indicateur)
-indicateurs <- c(
+indicateurs_campagnes <- c(
   "Nombre de campagnes"          = "nb_campagnes",
   "Nombre de campagnes réussies" = "nb_reussies",
   "Ratio (%)"                    = "combine"
@@ -65,7 +69,7 @@ criteres_pays <- c(
 )
 
 
-# ---- Couleurs -------------------------------------------
+# ---- Couleurs ------------------------------------------------------
 COULEUR_PRIMAIRE    <- "#00A3E0"
 COULEUR_REUSSIE     <- "#00A3E0"
 COULEUR_NON_REUSSIE <- "gray83"
@@ -77,7 +81,7 @@ COULEUR_TEXTE_KPI   <- "#FFFFFF"
 
 
 
-# ---- Texte explication indicateurs ----------------------------------------
+# ---- Texte explication indicateurs ---------------------------------
 AIDE_PERIMETRE <- paste(
   "Sont prises en compte : les campagnes en euros, lancées depuis le",
   "1er janvier 2020 et non annulées."
@@ -114,7 +118,7 @@ AIDE_CLASSEMENT_PAYS <- paste(
 
 
 
-# ---- Date de la dernière campagne -------------------------------------
+# ---- Date de la dernière campagne ----------------------------------
 date_derniere_maj <- max(data_ulule_clean$date_start)
 texte_derniere_maj <- paste(
   "Date de lancement de la dernière campagne enregistrée le :",
