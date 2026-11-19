@@ -275,7 +275,7 @@ server <- function(input, output, session) {
             tooltip = paste0(
               "Période : ", periode,
               "\nStatut : ", statut,
-              "\nMontant en fonction du statut : ", fmt_eur(montant_total),
+              "\nMontant en fonction : ", fmt_eur(montant_total),
               "\nNombre de campagnes : ", nombre_campagnes,
               "\nMontant total période : ", fmt_eur(montant_total_periode)
             ),
