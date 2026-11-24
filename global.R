@@ -1,5 +1,5 @@
 # ============================================================
-# global.R
+# global
 # ============================================================
 
 
@@ -14,12 +14,16 @@ library(lubridate)       # Manipulation des dates
 library(shinyWidgets)    # pickerInput (sélection multiple avec recherche)
 
 
-# ---- Chargement des données -----------------------------------------
+# ---- Chargement des fonctions --------------------------------------
+source("./fonction/fonction.R")
+
+
+# ---- Chargement des données ----------------------------------------
 chemin_donnees <- "data/data_ulule_2025.csv"
 data_ulule <- read_csv(chemin_donnees)
 
 
-# ---- Nettoyage des données -------------------------------------------
+# ---- Nettoyage des données -----------------------------------------
 data_ulule_clean <- data_ulule |>
   mutate(
     # Conversion des colonnes de dates en vrai type Date
@@ -34,19 +38,19 @@ data_ulule_clean <- data_ulule |>
     nb_days = as.double(difftime(date_end, date_start, units = "days"))
   ) |>
   filter(
-    is_cancelled == FALSE,                  # On écarte les campagnes annulées
-    !is.na(date_start),                     # On écarte les lignes sans date de début
+    is_cancelled == FALSE,                  # On écarte les campagnes annulées, 3196 annulées
+    !is.na(date_start),                     # On écarte les lignes sans date de début, 69 sans date de début
     date_start >= as.Date("2020-01-01"),    # Campagnes lancées à partir de 2020
-    currency == "EUR"                       # Campagnes en euros uniquement
+    currency == "EUR"                       # Campagnes en euros uniquement -> 2500 exclut
   )
 
-# ---- Listes utilisées dans les filtres de l'UI -----------------------
+# ---- Listes utilisées dans les filtres de l'UI ---------------------
 liste_annees     <- sort(unique(data_ulule_clean$annee))
 liste_trimestres <- sort(unique(data_ulule_clean$trimestre))
 liste_categories <- sort(unique(na.omit(data_ulule_clean$category)))
 
 # Correspondance "libellé affiché" -> "valeur technique" (input$indicateur)
-indicateurs <- c(
+indicateurs_campagnes <- c(
   "Nombre de campagnes"          = "nb_campagnes",
   "Nombre de campagnes réussies" = "nb_reussies",
   "Ratio (%)"                    = "combine"
@@ -65,23 +69,22 @@ criteres_pays <- c(
 )
 
 
-
-# ---- Constantes de couleurs -------------------------------------------
+# ---- Couleurs ------------------------------------------------------
 COULEUR_PRIMAIRE    <- "#00A3E0"
-COULEUR_REUSSIE     <- COULEUR_PRIMAIRE
+COULEUR_REUSSIE     <- "#00A3E0"
 COULEUR_NON_REUSSIE <- "gray83"
 COULEUR_MEDIANE     <- "#27AE60"
-COULEUR_CORAIL      <- "#FF6B57"
+COULEUR_CORAIL      <- "#F01446"
 COULEUR_NOIR        <- "#2B2B2B"
 COULEUR_VIOLET      <- "#8E44AD"
 COULEUR_TEXTE_KPI   <- "#FFFFFF"
 
 
 
-# ---- Textes d'aide (infobulles) ----------------------------------------
+# ---- Texte explication indicateurs ---------------------------------
 AIDE_PERIMETRE <- paste(
   "Sont prises en compte : les campagnes en euros, lancées depuis le",
-  "1er janvier 2020 et non annulées. Tous les montants sont en euros."
+  "1er janvier 2020 et non annulées."
 )
 AIDE_NB_CAMPAGNES <- "Nombre de campagnes correspondant aux filtres sélectionnés."
 AIDE_REUSSIE <- paste(
@@ -105,81 +108,19 @@ AIDE_MONTANT_TOTAL <- paste(
   "qu'elles aient réussi ou non."
 )
 AIDE_MEDIAN <- paste(
-  "La moitié des campagnes a collecté moins que ce montant, l'autre moitié",
-  "davantage. Moins sensible aux très gros projets que la moyenne."
-)
+  "Montant médian collecté par campagne.")
+
 AIDE_TOP_PAYS <- "Pays dont les campagnes ont collecté le montant total le plus élevé."
 AIDE_CLASSEMENT_PAYS <- paste(
-  "Les 10 premiers pays selon le critère choisi. Les montants sont en euros",
+  "Les 10 premiers pays selon le critère choisi. Les montants sont en euros et exclusion des pays vides",
   "(seules les campagnes en euros sont retenues)."
 )
 
-# Petite icône "i" avec infobulle (bslib::tooltip), à placer à côté d'un titre
-icone_aide <- function(texte) {
-  bslib::tooltip( #permet de faire une infobulle
-    bsicons::bs_icon("info-circle", class = "ms-1"), #icone I avec un espace à gauche
-    texte,
-    placement = "top" # infobulle au dessus de l'icone
-  )
-}
 
 
-# ---- Fonctions utilitaires --------------------------------------------
-
-# Formate un nombre en euros : arrondi à l'entier, espace comme séparateur
-fmt_eur <- function(x) {
-  paste0(format(round(x), big.mark = " "), " €")
-}
-
-# Colonnes affichées dans l'onglet "Données" et exportées en CSV.
-# Nom affiché (à gauche) = nom de la colonne dans les données (à droite).
-COLONNES_EXPORT <- c(
-  "Identifiant"                = "id",
-  "Catégorie"                  = "category",
-  "Pays"                       = "country",
-  "Localisation"               = "location",
-  "Date de début"              = "date_start",
-  "Date de fin"                = "date_end",
-  "Durée (jours)"              = "nb_days",
-  "Statut"                     = "status",
-  "Terminée"                   = "finished",
-  "Objectif (€)"               = "goal",
-  "Montant collecté (€)"       = "amount_raised",
-  "Taux de financement (%)"    = "percent",
-  "Objectif atteint"           = "goal_raised",
-  "Lien"                       = "absolute_url"
-)
-
-# Ne garde que les colonnes principales, avec des noms lisibles
-table_export <- function(df) {
-  df |> select(all_of(COLONNES_EXPORT))
-}
-
-# Thème ggplot2 commun à tous les graphiques de l'appli
-theme_ulule <- function() {
-  theme_minimal() +
-    theme(
-      panel.grid      = element_blank(), #supprime le quadrillage
-      legend.position = "bottom",
-      axis.text.x     = element_text(angle = 45, hjust = 1)
-    )
-}
-
-# Convertit un objet ggplot en graphique interactif girafe
-to_girafe <- function(p) {
-  girafe(
-    ggobj = p, # objet qui va etre transformé
-    width_svg  = 8,
-    height_svg = 4.5,
-    options = list(
-      opts_sizing(rescale = TRUE, width = 1) #prend toutes la largeur disponible et redimensionner si on change d'écran 
-    )
-  )
-}
-
-# ---- Date de la dernière campagne -------------------------------------
+# ---- Date de la dernière campagne ----------------------------------
 date_derniere_maj <- max(data_ulule_clean$date_start)
 texte_derniere_maj <- paste(
-  "Date de lancement de la dernière campagne :",
+  "Date de lancement de la dernière campagne enregistrée le :",
   format(date_derniere_maj, "%d/%m/%Y")
 )
