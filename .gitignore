@@ -5,6 +5,8 @@ data/data_allocine.csv
 .Rhistory
 projet.Rproj
 script_1.R
+R/
+rsconnect/
 
 .RData
 .Ruserdata
